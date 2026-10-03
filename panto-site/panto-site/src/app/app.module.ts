@@ -19,6 +19,7 @@ import { CostumeService } from './costume-list-container/services/costume-servic
 import { MatIconModule } from '@angular/material/icon';
 import { CostumeFiltersComponent } from './costume-filters/costume-filters.component';
 import { DynamicFormDialogComponent } from './dynamic-form/components/dynamic-form-dialog/dynamic-form-dialog.component';
+import { BulkCostumeDialogComponent } from './dynamic-form/components/bulk-costume-dialog/bulk-costume-dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DualInputGroupComponent } from './dynamic-form/components/dual-input-group/dual-input-group.component';
 import { InputDropdownComponent } from './dynamic-form/components/input-dropdown/input-dropdown.component';
@@ -56,6 +57,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         CostumeListContainerComponent,
         CostumeFiltersComponent,
         DynamicFormDialogComponent,
+        BulkCostumeDialogComponent,
         DualInputGroupComponent,
         InputDropdownComponent,
         FileUploadComponent,

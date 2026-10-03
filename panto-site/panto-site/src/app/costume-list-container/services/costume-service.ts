@@ -20,6 +20,7 @@ import {
     startAfter,
     updateDoc,
     where,
+    writeBatch,
 } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import {
@@ -572,6 +573,20 @@ export class CostumeService {
         const costumesRef = collection(db, COSTUME_COLLECTION);
         const docRef = await addDoc(costumesRef, costume);
         //const docRef = await setDoc(doc(db, COSTUME_COLLECTION), costume);
+    }
+
+    async createCostumes(costumes: CostumeModel[]): Promise<void> {
+        if (costumes.length > 500) {
+            throw new Error('Firestore batches are limited to 500 writes.');
+        }
+
+        const db = getFirestore();
+        const costumesRef = collection(db, COSTUME_COLLECTION);
+        const batch = writeBatch(db);
+        for (const costume of costumes) {
+            batch.set(doc(costumesRef), costume);
+        }
+        await batch.commit();
     }
 
     async updateFolder(costumeId: string, folder: string): Promise<void> {

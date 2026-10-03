@@ -23,14 +23,21 @@
         </button>
         <button
             type="button"
-            class="block lg:hidden text-sm leading-6 font-medium py-2 px-3 rounded-lg"
+            class="app-button-secondary block lg:hidden text-sm leading-6 py-2 px-3"
             (click)="openFilter.emit()"
         >
             Filter
         </button>
         <button
             type="button"
-            class="max-w-24 min-w-24 bg-indigo-600 text-white text-sm leading-6 font-medium py-2 px-3 rounded-lg cursor-pointer"
+            class="app-button-secondary text-sm leading-6 py-2 px-3 cursor-pointer mr-2"
+            (click)="addBulk.emit()"
+        >
+            Bulk add
+        </button>
+        <button
+            type="button"
+            class="app-button-primary max-w-24 min-w-24 text-sm leading-6 py-2 px-3 cursor-pointer"
             (click)="addNew.emit()"
         >
             Add new

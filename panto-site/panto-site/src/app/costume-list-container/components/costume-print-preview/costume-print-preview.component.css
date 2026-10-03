@@ -42,10 +42,11 @@
 
 .toolbar-actions {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 12px;
 }
 
-.print-preview-toolbar button {
+.print-preview-toolbar button:not(.app-button-primary) {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -56,9 +57,14 @@
 }
 
 .print-preview-toolbar .print-preview-action {
-    background: #0f766e;
-    border-color: #0f766e;
-    color: white;
+    display: inline-flex;
+    min-width: 92px;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 4px;
 }
 
 .print-preview-sheet {

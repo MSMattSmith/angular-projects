@@ -1,16 +1,33 @@
-<div class="row">
-  <div class="col-8">
-    <label>
-      <input
-        type="file"
-        class="text-nowrap text-truncate"
-        (change)="selectFile($event)"
-      />
-    </label>
-  </div>
+<div class="row" [class.compact-upload]="compact">
+  <input
+    #fileInput
+    type="file"
+    [hidden]="compact"
+    class="text-nowrap text-truncate"
+    aria-label="Choose image file"
+    (change)="selectFile($event)"
+  />
+  <button
+    *ngIf="compact"
+    type="button"
+    class="compact-image-picker"
+    [disabled]="isUploading"
+    (click)="openFilePicker()"
+  >
+    <ng-container *ngIf="currentFileUpload?.url; else chooseImage">
+      <span class="compact-image-thumb-wrap">
+        <img [src]="currentFileUpload?.url" alt="Selected costume" />
+        <mat-icon>edit</mat-icon>
+      </span>
+    </ng-container>
+    <ng-template #chooseImage>
+      <mat-icon>add_photo_alternate</mat-icon>
+      {{ isUploading ? 'Uploading...' : 'Choose image' }}
+    </ng-template>
+  </button>
 </div>
 
-<div *ngIf="currentFileUpload && currentFileUpload.url" class="progress mt-2">
+<div *ngIf="currentFileUpload && currentFileUpload.url && !compact" class="progress mt-2">
   <img
     [src]="currentFileUpload.url"
     alt=""

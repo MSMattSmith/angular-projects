@@ -1,7 +1,7 @@
 <div class="flex flex-row-reverse mr-4 md:mr-0">
     <button
         type="button"
-        class="border border-gray-300 rounded-md flex items-center px-3 ml-2 cursor-pointer"
+        class="app-button-primary flex items-center text-sm px-3 ml-2 cursor-pointer"
         [disabled]="isPreparingPrint"
         (click)="printAllCostumes()"
     >
@@ -202,24 +202,16 @@
     <button
         (click)="prevPage()"
         [disabled]="costumeService.firstPage"
-        [ngClass]="
-            costumeService.firstPage
-                ? 'bg-gray-200'
-                : 'bg-indigo-600 cursor-pointer'
-        "
-        class="text-white text-sm leading-6 font-medium py-2 px-3 rounded-l-lg inline-flex"
+        [ngClass]="costumeService.firstPage ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
+        class="app-button-primary text-sm leading-6 py-2 px-3 rounded-r-none inline-flex"
     >
         <mat-icon>chevron_left</mat-icon>Previous
     </button>
     <button
         (click)="nextPage()"
         [disabled]="costumeService.lastPage"
-        [ngClass]="
-            costumeService.lastPage
-                ? 'bg-gray-200'
-                : 'bg-indigo-600 cursor-pointer'
-        "
-        class="text-white text-sm leading-6 font-medium py-2 px-3 rounded-r-lg inline-flex ml-1"
+        [ngClass]="costumeService.lastPage ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
+        class="app-button-primary text-sm leading-6 py-2 px-3 rounded-l-none inline-flex ml-1"
     >
         Next<mat-icon>chevron_right</mat-icon>
     </button>

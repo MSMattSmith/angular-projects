@@ -1,0 +1,89 @@
+<section class="bulk-dialog">
+    <header class="bulk-header">
+        <div>
+            <h2>Add costumes in bulk</h2>
+            <p>Enter one costume per row. Catalogue number, description, and type are required.</p>
+        </div>
+        <button type="button" class="app-button-secondary icon-button" aria-label="Close" (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </header>
+
+    <div class="bulk-table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Catalogue no.</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Colours</th>
+                    <th scope="col">Sizes / qty</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col"><span class="sr-only">Remove row</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of rows; let rowIndex = index">
+                    <td><input [(ngModel)]="row.catalogueNo" [ngModelOptions]="{ standalone: true }" aria-label="Catalogue number" /></td>
+                    <td><input [(ngModel)]="row.description" [ngModelOptions]="{ standalone: true }" aria-label="Description" /></td>
+                    <td>
+                        <app-input-dropdown
+                            [options]="typeOptions"
+                            [single]="true"
+                            [defaultValues]="row.type ? [row.type] : []"
+                            (selected)="typeSelected(row, $event)"
+                        ></app-input-dropdown>
+                    </td>
+                    <td>
+                        <app-file-upload
+                            [compact]="true"
+                            (uploaded)="imageUploaded(row, $event)"
+                            (uploadState)="imageUploadStateChanged(row, $event)"
+                            (uploadFailed)="row.imageError = 'Upload failed'"
+                        ></app-file-upload>
+                        <span *ngIf="row.imageUploading" class="image-upload-status">Uploading...</span>
+                        <span *ngIf="row.imageError" class="image-upload-error">{{ row.imageError }}</span>
+                    </td>
+                    <td>
+                        <app-input-dropdown
+                            [options]="colourOptions"
+                            [single]="false"
+                            [defaultValues]="row.colours"
+                            (selected)="coloursSelected(row, $event)"
+                        ></app-input-dropdown>
+                    </td>
+                    <td><input [(ngModel)]="row.sizes" [ngModelOptions]="{ standalone: true }" aria-label="Sizes and quantities" placeholder="S:2, M:1" /></td>
+                    <td><input [(ngModel)]="row.notes" [ngModelOptions]="{ standalone: true }" aria-label="Notes" /></td>
+                    <td>
+                        <button
+                            type="button"
+                            class="app-button-secondary icon-button remove-row"
+                            aria-label="Remove costume row"
+                            [disabled]="rows.length === 1"
+                            (click)="removeRow(rowIndex)"
+                        >
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="row-count">{{ completedRows.length }} costume{{ completedRows.length === 1 ? '' : 's' }} ready</p>
+    <p *ngIf="errorMessage" class="error-message" role="alert">{{ errorMessage }}</p>
+
+    <footer class="bulk-footer">
+        <button type="button" class="app-button-secondary add-row-button" [disabled]="rows.length >= 500 || isSaving" (click)="addRow()">
+            <mat-icon>add</mat-icon>
+            Add row
+        </button>
+        <div class="footer-actions">
+            <button type="button" class="app-button-secondary cancel-button" [disabled]="isSaving" (click)="cancel()">Cancel</button>
+            <button type="button" class="app-button-primary save-button" [disabled]="isSaving || hasUploadingImages || completedRows.length === 0" (click)="save()">
+                {{ isSaving ? 'Saving...' : 'Save ' + completedRows.length + ' costumes' }}
+            </button>
+        </div>
+    </footer>
+</section>

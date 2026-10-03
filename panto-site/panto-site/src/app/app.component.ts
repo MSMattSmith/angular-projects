@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CostumeListContainerComponent } from './costume-list-container/costume-list-container.component';
 import { CostumeFilters } from './costume-list-container/models/costume';
 import { DynamicFormDialogComponent } from './dynamic-form/components/dynamic-form-dialog/dynamic-form-dialog.component';
+import { BulkCostumeDialogComponent } from './dynamic-form/components/bulk-costume-dialog/bulk-costume-dialog.component';
 import {
     initializeFirestore,
     persistentLocalCache,
@@ -78,5 +79,20 @@ export class AppComponent implements OnInit, OnDestroy {
                 filterOptions: this.filterOptions,
             },
         });
+    }
+
+    public openBulkForm(): void {
+        this.dialog
+            .open(BulkCostumeDialogComponent, {
+                width: 'min(1200px, 96vw)',
+                maxWidth: '96vw',
+                data: { filterOptions: this.filterOptions },
+            })
+            .afterClosed()
+            .subscribe((saved: boolean) => {
+                if (saved) {
+                    window.location.reload();
+                }
+            });
     }
 }

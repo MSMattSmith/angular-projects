@@ -1,0 +1,46 @@
+.compact-upload .col-8 {
+	width: auto;
+}
+
+.compact-image-picker {
+	display: inline-flex;
+	min-height: 34px;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 4px 8px;
+	border: 1px solid #e5e7eb;
+	border-radius: 4px;
+	background: white;
+	color: #334155;
+	font-size: 11px;
+}
+
+.compact-image-picker:disabled {
+	opacity: 0.65;
+}
+
+.compact-image-thumb-wrap {
+	position: relative;
+	display: inline-flex;
+}
+
+.compact-image-thumb-wrap img {
+	width: 32px;
+	height: 34px;
+	border-radius: 3px;
+	object-fit: cover;
+}
+
+.compact-image-thumb-wrap mat-icon {
+	position: absolute;
+	right: -4px;
+	bottom: -4px;
+	width: 17px;
+	height: 17px;
+	border-radius: 50%;
+	background: white;
+	color: #0f766e;
+	font-size: 14px;
+	line-height: 17px;
+}

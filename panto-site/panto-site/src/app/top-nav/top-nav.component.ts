@@ -12,6 +12,8 @@ export class TopNavComponent implements OnInit {
     @Output()
     addNew: EventEmitter<void> = new EventEmitter();
     @Output()
+    addBulk: EventEmitter<void> = new EventEmitter();
+    @Output()
     openFilter: EventEmitter<void> = new EventEmitter();
 
     logoUrl: string = '';

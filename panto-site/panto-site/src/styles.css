@@ -5,6 +5,54 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.app-button-primary,
+.app-button-secondary,
+.app-button-danger {
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.app-button-primary {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+}
+
+.app-button-primary:hover:not(:disabled) {
+    background: #4338ca;
+    border-color: #4338ca;
+}
+
+.app-button-secondary {
+    background: #fff;
+    border-color: #cbd5e1;
+    color: #334155;
+}
+
+.app-button-secondary:hover:not(:disabled) {
+    background: #f1f5f9;
+}
+
+.app-button-danger {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+}
+
+.app-button-danger:hover:not(:disabled) {
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.app-button-primary:disabled,
+.app-button-secondary:disabled,
+.app-button-danger:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 .cdk-global-overlay-wrapper {
     overflow: auto;
 }
