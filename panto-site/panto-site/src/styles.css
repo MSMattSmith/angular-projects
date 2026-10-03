@@ -8,3 +8,150 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .cdk-global-overlay-wrapper {
     overflow: auto;
 }
+
+@media print {
+    @page {
+        margin: 8mm;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    app-root > div {
+        position: static !important;
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    app-root app-costume-filters,
+    app-root app-top-nav {
+        display: none !important;
+    }
+
+    app-root app-costume-list-container {
+        display: block !important;
+        position: static !important;
+        overflow: visible !important;
+    }
+
+    app-root app-costume-list-container > div:not(.print-area) {
+        display: none !important;
+    }
+
+    app-root app-costume-print-preview,
+    app-root app-costume-print-preview * {
+        visibility: visible !important;
+    }
+
+    app-root app-costume-print-preview {
+        display: block !important;
+        position: static !important;
+        height: auto !important;
+        min-height: 0 !important;
+        width: 100%;
+        overflow: visible !important;
+        color: #111;
+        font-family: Arial, sans-serif;
+    }
+
+    app-root app-costume-print-preview .print-preview-toolbar {
+        display: none !important;
+    }
+
+    app-root app-costume-print-preview .preview-spinner-overlay {
+        display: none !important;
+    }
+
+    app-root app-costume-print-preview .print-preview-overlay {
+        min-height: 0 !important;
+        overflow: visible !important;
+        background: white !important;
+    }
+
+    app-root app-costume-print-preview .print-preview-sheet {
+        width: auto;
+        max-width: none;
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+        overflow: visible !important;
+        box-shadow: none;
+    }
+
+    app-root app-costume-print-preview .print-page {
+        box-sizing: border-box;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        break-after: page;
+        page-break-after: always;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        overflow: visible;
+    }
+
+    app-root app-costume-print-preview .print-page:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    app-root app-costume-print-preview .print-preview-sheet h1 {
+        margin: 0 0 4mm;
+        font-size: 16pt;
+    }
+
+    app-root app-costume-print-preview .print-costume-grid {
+        display: grid !important;
+        box-sizing: border-box;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: repeat(10, 23.5mm);
+        grid-auto-flow: row;
+        gap: 2mm;
+        align-content: start;
+    }
+
+    app-root app-costume-print-preview .print-costume {
+        display: flex !important;
+        box-sizing: border-box;
+        height: 23.5mm;
+        min-height: 23.5mm;
+        max-height: 23.5mm;
+        gap: 2mm;
+        padding: 1mm;
+        font-size: 7.5pt;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        overflow: hidden;
+    }
+
+    app-root app-costume-print-preview .print-costume img {
+        display: block;
+        width: 14mm;
+        height: 18mm;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    app-root app-costume-print-preview .print-costume-details h2 {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        margin: 0 0 0.8mm;
+        font-size: 8.5pt;
+        font-weight: 700;
+        -webkit-line-clamp: 2;
+    }
+
+    app-root app-costume-print-preview .print-costume-details p {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        margin: 0.6mm 0;
+        font-size: 7pt;
+        -webkit-line-clamp: 1;
+    }
+}

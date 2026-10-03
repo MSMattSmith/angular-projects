@@ -27,6 +27,7 @@ import {
     CostumeFilters,
     CostumeModel,
     FilterItem,
+    normalizeCostumeQuantity,
 } from '../models/costume';
 import { BehaviorSubject } from 'rxjs';
 
@@ -35,6 +36,7 @@ const COSTUME_COLLECTION = 'costumes';
 
 @Injectable()
 export class CostumeService {
+    private imageUrlCache = new Map<string, Promise<string>>();
     private firstVisible!: any;
     private lastVisible!: any;
     public firstPage: boolean = false;
@@ -44,6 +46,8 @@ export class CostumeService {
     private filters$: BehaviorSubject<CostumeFilters> = new BehaviorSubject(
         new CostumeFilters()
     );
+    private costumeDescriptions$: BehaviorSubject<string[]> =
+        new BehaviorSubject<string[]>([]);
 
     private pendingRefresh$: BehaviorSubject<number> = new BehaviorSubject(0);
 
@@ -163,6 +167,24 @@ export class CostumeService {
         this.setLoadingStatus(false);
 
         return costumes;
+    }
+
+    async getAllCostumes(): Promise<Costume[]> {
+        const db = getFirestore();
+        const q = query(collection(db, COSTUME_COLLECTION));
+        const querySnapshot = await getDocs(q);
+        const costumes = querySnapshot.docs.map((costumeDoc) => {
+                const costumeModel = costumeDoc.data() as CostumeModel;
+                return new Costume(costumeModel, costumeDoc.id);
+            });
+
+        return costumes.sort((a, b) =>
+            CostumeService.sortBySplitChar(
+                a.catalogueNo.toString(),
+                b.catalogueNo.toString(),
+                '.'
+            )
+        );
     }
 
     private addSnapshotListener(): void {
@@ -350,8 +372,8 @@ export class CostumeService {
             return true;
         }
 
-        const filteredBySize = [];
-        costume.quantity.forEach((x) => {
+        const filteredBySize: string[] = [];
+        normalizeCostumeQuantity(costume.quantity).forEach((x) => {
             if (filters.sizes.map((s) => s.label).includes(x.name)) {
                 filteredBySize.push(x.name);
                 return;
@@ -385,17 +407,25 @@ export class CostumeService {
         return this.filters$;
     }
 
+    public getCostumeDescriptions(): BehaviorSubject<string[]> {
+        return this.costumeDescriptions$;
+    }
+
     private async setCostumeFilters(): Promise<void> {
         const filters: CostumeFilters = new CostumeFilters();
 
         const db = getFirestore();
         const q = query(collection(db, COSTUME_COLLECTION));
         const querySnapshot = await this.tryGetDocsFromCache(q);
+        const descriptions = new Set<string>();
 
         filters.folders.push({ label: 'All', count: 0 });
 
         querySnapshot.forEach(async (doc) => {
             const costumeModel = doc.data() as CostumeModel;
+            if (typeof costumeModel.description === 'string') {
+                descriptions.add(costumeModel.description.trim());
+            }
 
             for (const colour of costumeModel.colours) {
                 const colourIndex = filters.colours.findIndex(
@@ -434,6 +464,11 @@ export class CostumeService {
         filters.sizes.sort(this.sortSizes);
         filters.types.sort((a, b) => (a.label > b.label ? 1 : -1));
 
+        this.costumeDescriptions$.next(
+            Array.from(descriptions).filter(Boolean).sort((a, b) =>
+                a.localeCompare(b)
+            )
+        );
         this.filters$.next(filters);
     }
 
@@ -518,19 +553,18 @@ export class CostumeService {
             return '';
         }
 
-        let imageUrl = '';
-        const storage = getStorage();
-        const storageRef = ref(storage, `costumes/${fileName}`);
-
-        await getDownloadURL(storageRef)
-            .then((url) => {
-                imageUrl = url;
-            })
-            .catch((reason: any) => {
+        let imageUrlRequest = this.imageUrlCache.get(fileName);
+        if (!imageUrlRequest) {
+            imageUrlRequest = getDownloadURL(
+                ref(getStorage(), `costumes/${fileName}`)
+            ).catch((reason: any) => {
                 console.log(`error: ${reason}`);
+                return '';
             });
+            this.imageUrlCache.set(fileName, imageUrlRequest);
+        }
 
-        return imageUrl;
+        return imageUrlRequest;
     }
 
     async createCostume(costume: CostumeModel) {
@@ -553,6 +587,15 @@ export class CostumeService {
         });
     }
 
+    async updateCostumeImage(
+        costumeId: string,
+        imageName: string
+    ): Promise<void> {
+        await updateDoc(doc(getFirestore(), COSTUME_COLLECTION, costumeId), {
+            imageName,
+        });
+    }
+
     async updateCostumeSizes(
         costumeId: string,
         checkedOutSizeIds: string[],
@@ -563,14 +606,15 @@ export class CostumeService {
         const costumeToUpdateData = await getDoc(costumeToUpdateDoc);
         const costumeToUpdate = costumeToUpdateData.data() as CostumeModel;
 
-        costumeToUpdate.quantity.forEach((size) => {
+        const quantity = normalizeCostumeQuantity(costumeToUpdate.quantity);
+        quantity.forEach((size) => {
             if (checkedOutSizeIds.includes(size.id)) {
                 size.checkedOutBy = checkedOutBy;
             }
         });
 
         await updateDoc(costumeToUpdateDoc, {
-            quantity: costumeToUpdate.quantity,
+            quantity,
         });
     }
 

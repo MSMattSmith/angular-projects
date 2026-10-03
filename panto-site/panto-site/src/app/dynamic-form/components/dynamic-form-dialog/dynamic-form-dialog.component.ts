@@ -17,10 +17,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class DynamicFormDialogComponent implements OnInit {
     public questions: QuestionBase<any>[] = [];
     public loaded = false;
+    public isChangingImage = false;
+    public imageChangeError = '';
 
     constructor(
         public dialogRef: MatDialogRef<DynamicFormDialogComponent>,
         private questionService: QuestionService,
+        private costumeService: CostumeService,
         @Inject(MAT_DIALOG_DATA)
         public data?: { costumeToEdit: Costume; filterOptions: CostumeFilters }
     ) {
@@ -30,6 +33,28 @@ export class DynamicFormDialogComponent implements OnInit {
     ngOnInit(): void {
         this.setUpQuestions();
         this.loaded = true;
+    }
+
+    public async imageUploaded(imageName: string): Promise<void> {
+        const costume = this.data?.costumeToEdit;
+        if (!costume || !imageName) {
+            return;
+        }
+
+        this.isChangingImage = true;
+        this.imageChangeError = '';
+        try {
+            await this.costumeService.updateCostumeImage(
+                costume.id,
+                imageName
+            );
+            costume.imageName = imageName;
+            costume.imageUrl = await this.costumeService.getImageUrl(imageName);
+        } catch {
+            this.imageChangeError = 'Could not save the replacement image.';
+        } finally {
+            this.isChangingImage = false;
+        }
     }
 
     private setUpQuestions(): void {

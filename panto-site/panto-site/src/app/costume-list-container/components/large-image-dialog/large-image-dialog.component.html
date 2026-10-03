@@ -11,6 +11,12 @@
         class="m-auto flex-none rounded-md bg-slate-100 max-h-screen-75"
         (click)="showInfo = !showInfo"
     />
+    <div class="my-3 flex flex-wrap items-center gap-2">
+        <span class="text-sm font-medium">Replace image</span>
+        <app-file-upload (uploaded)="imageUploaded($event)"></app-file-upload>
+        <span *ngIf="isChangingImage" class="text-sm text-slate-500">Saving...</span>
+        <span *ngIf="imageChangeError" class="text-sm text-red-600">{{ imageChangeError }}</span>
+    </div>
     <div
         *ngIf="showInfo"
         class="min-w-0 absolute flex-auto bottom-0 w-full overflow-hidden bg-white/90 p-2"

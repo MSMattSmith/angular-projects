@@ -1,0 +1,68 @@
+<section
+    class="print-preview-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Costume print preview"
+>
+    <header class="print-preview-toolbar">
+        <div>
+            <h2>Print preview</h2>
+            <p *ngIf="!isLoading">
+                {{ costumes.length }} costumes
+                <span *ngIf="imagesLoading">Loading images...</span>
+            </p>
+        </div>
+        <div class="toolbar-actions">
+            <button type="button" aria-label="Close preview" (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+            <button
+                type="button"
+                class="print-preview-action"
+                [disabled]="isLoading || isPreparingPrint || !!errorMessage"
+                (click)="print()"
+            >
+                <mat-icon>print</mat-icon>
+                {{ isPreparingPrint ? "Preparing..." : "Print" }}
+            </button>
+        </div>
+    </header>
+    <div
+        *ngIf="isLoading || imagesLoading || isPreparingPrint"
+        class="preview-spinner-overlay fixed inset-0 z-20 flex items-center justify-center bg-white/80"
+        role="status"
+        aria-live="polite"
+    >
+        <div class="flex flex-col items-center gap-3">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>
+                {{
+                    isLoading
+                        ? "Loading costumes..."
+                        : isPreparingPrint
+                          ? "Preparing to print..."
+                          : "Loading costume images..."
+                }}
+            </p>
+        </div>
+    </div>
+    <main class="print-preview-sheet">
+        <p *ngIf="isLoading">Loading costumes...</p>
+        <p *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
+        <div *ngIf="!isLoading && !errorMessage">
+            <section class="print-page" *ngFor="let page of pages; let pageIndex = index">
+                <h1>Page {{ pageIndex + 1 }}</h1>
+                <div class="print-costume-grid">
+                    <article class="print-costume" *ngFor="let costume of page">
+                        <img *ngIf="costume.imageUrl" [src]="costume.imageUrl" alt="" />
+                        <div class="print-costume-details">
+                            <h2>{{ costume.catalogueNo }}: {{ costume.description }}</h2>
+                            <p>{{ costume.type }}<span *ngIf="costume.notes"> | {{ costume.notes }}</span></p>
+                            <p>Sizes: {{ getPrintableSizes(costume) }}</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+</section>

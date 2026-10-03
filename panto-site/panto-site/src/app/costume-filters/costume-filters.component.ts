@@ -1,23 +1,33 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    OnDestroy,
+    OnInit,
+    Output,
+} from '@angular/core';
 import { CostumeService } from '../costume-list-container/services/costume-service';
 import {
     CostumeFilters,
     FilterItem,
 } from '../costume-list-container/models/costume';
 import { getBgColour } from '../helpers/costume-helper';
-import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-costume-filters',
     templateUrl: './costume-filters.component.html',
     styleUrls: ['./costume-filters.component.scss'],
 })
-export class CostumeFiltersComponent implements OnInit {
+export class CostumeFiltersComponent implements OnInit, OnDestroy {
     private _subscription = new Subscription();
+    private descriptionSearch$ = new Subject<string>();
+    private costumeDescriptions: string[] = [];
+    private lastSearchedDescription = '';
     public filterOptions!: CostumeFilters;
     public filters: CostumeFilters = new CostumeFilters();
     public colourHover: string = '';
     public descriptionSearchValue: string = '';
+    public descriptionSuggestions: string[] = [];
     public loading: boolean = false;
 
     @Output()
@@ -44,10 +54,34 @@ export class CostumeFiltersComponent implements OnInit {
                     this.loading = isLoading;
                 })
         );
+
+        this._subscription.add(
+            this.costumeService
+                .getCostumeDescriptions()
+                .subscribe((descriptions) => {
+                    this.costumeDescriptions = descriptions;
+                    this.updateDescriptionSuggestions();
+                })
+        );
+
+        this._subscription.add(
+            this.descriptionSearch$
+                .pipe(debounceTime(350), distinctUntilChanged())
+                .subscribe((description) => {
+                    if (description !== this.lastSearchedDescription) {
+                        this.runSearch();
+                    }
+                })
+        );
+    }
+
+    ngOnDestroy(): void {
+        this._subscription.unsubscribe();
     }
 
     public runSearch(): void {
         this.loading = true;
+        this.lastSearchedDescription = this.filters.description;
         this.filterChanged.emit({ filters: this.filters, closePanel: false });
     }
 
@@ -71,6 +105,19 @@ export class CostumeFiltersComponent implements OnInit {
 
     public onDescriptionChange(): void {
         this.filters.description = this.descriptionSearchValue;
+        this.updateDescriptionSuggestions();
+        this.descriptionSearch$.next(this.descriptionSearchValue);
+    }
+
+    private updateDescriptionSuggestions(): void {
+        const search = this.descriptionSearchValue.trim().toLocaleLowerCase();
+        this.descriptionSuggestions = search.length < 2
+            ? []
+            : this.costumeDescriptions
+                  .filter((description) =>
+                      description.toLocaleLowerCase().includes(search)
+                  )
+                  .slice(0, 8);
     }
 
     public colourChecked(val: FilterItem): void {

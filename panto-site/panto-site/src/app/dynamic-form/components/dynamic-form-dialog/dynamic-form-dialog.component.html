@@ -1,5 +1,24 @@
 <div>
-    <h2 class="mt-4 ml-5 text-2xl font-bold text-gray-900 dark:text-white">Add new costume</h2>
+    <h2 class="mt-4 ml-5 text-2xl font-bold text-gray-900 dark:text-white">
+        {{ data?.costumeToEdit ? "Edit costume" : "Add new costume" }}
+    </h2>
+    <div *ngIf="data?.costumeToEdit as costume" class="mx-5 mt-4">
+        <img
+            [src]="costume.imageUrl"
+            alt=""
+            width="70"
+            height="90"
+            class="mb-2 rounded-md object-contain"
+        />
+        <p class="mb-1 text-sm font-medium">Replace image</p>
+        <app-file-upload (uploaded)="imageUploaded($event)"></app-file-upload>
+        <p *ngIf="isChangingImage" class="text-sm text-slate-500">
+            Saving image...
+        </p>
+        <p *ngIf="imageChangeError" class="text-sm text-red-600">
+            {{ imageChangeError }}
+        </p>
+    </div>
     <mat-dialog-content *ngIf="loaded" class="dialog-content">
         <app-dynamic-form
             class="w-full"

@@ -14,6 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 export class CostumeListContainerComponent implements OnInit {
     costumes: Costume[] = [];
     rawCostumes: Costume[] = [];
+    isPreparingPrint: boolean = false;
+    showPrintPreview: boolean = false;
     checkOutHover: string = '';
     imagesOnly: boolean = false;
     filters!: CostumeFilters;
@@ -94,6 +96,19 @@ export class CostumeListContainerComponent implements OnInit {
 
     public localGetBgColour(colour: string): string {
         return getBgColour(colour);
+    }
+
+    public async printAllCostumes(): Promise<void> {
+        this.isPreparingPrint = true;
+        try {
+            this.showPrintPreview = true;
+        } finally {
+            this.isPreparingPrint = false;
+        }
+    }
+
+    public closePrintPreview(): void {
+        this.showPrintPreview = false;
     }
 
     public async nextPage(): Promise<void> {

@@ -14,9 +14,18 @@
                     id="input-description"
                     class="focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-full text-sm leading-6 text-slate-900 placeholder-slate-400 rounded-md py-1 px-4 mb-4 ring-1 ring-slate-200 shadow-sm"
                     type="text"
+                    list="costume-description-suggestions"
+                    placeholder="Search costumes"
+                    aria-label="Search costumes by description"
                     [(ngModel)]="descriptionSearchValue"
                     (ngModelChange)="onDescriptionChange()"
                 />
+                <datalist id="costume-description-suggestions">
+                    <option
+                        *ngFor="let suggestion of descriptionSuggestions"
+                        [value]="suggestion"
+                    ></option>
+                </datalist>
             </div>
         </div>
 

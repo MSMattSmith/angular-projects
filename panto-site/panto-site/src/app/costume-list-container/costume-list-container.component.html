@@ -1,4 +1,13 @@
 <div class="flex flex-row-reverse mr-4 md:mr-0">
+    <button
+        type="button"
+        class="border border-gray-300 rounded-md flex items-center px-3 ml-2 cursor-pointer"
+        [disabled]="isPreparingPrint"
+        (click)="printAllCostumes()"
+    >
+        <mat-icon class="mr-1">preview</mat-icon>
+        {{ isPreparingPrint ? "Preparing..." : "Preview & print" }}
+    </button>
     <div class="border border-gray-300 rounded-md flex cursor-pointer">
         <input
             type="checkbox"
@@ -21,6 +30,10 @@
         </div>
     </div>
 </div>
+<app-costume-print-preview
+    *ngIf="showPrintPreview"
+    (closed)="closePrintPreview()"
+></app-costume-print-preview>
 <div
     class="grid pt-4 md:pt-0 gap-1 md:gap-4"
     [ngClass]="

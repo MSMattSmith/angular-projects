@@ -31,6 +31,7 @@ import { DeleteDialogComponent } from './costume-list-container/components/delet
 import { LargeImageDialogComponent } from './costume-list-container/components/large-image-dialog/large-image-dialog.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { FolderDialogComponent } from './costume-list-container/components/folder-dialog/folder-dialog.component';
+import { CostumePrintPreviewComponent } from './costume-list-container/components/costume-print-preview/costume-print-preview.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -64,6 +65,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         DeleteDialogComponent,
         LargeImageDialogComponent,
         FolderDialogComponent,
+        CostumePrintPreviewComponent,
     ],
     providers: [CostumeService, FileUploadService, NgxImageCompressService],
     bootstrap: [AppComponent],

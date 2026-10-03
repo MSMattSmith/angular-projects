@@ -6,6 +6,7 @@ import {
     MatDialog,
     MatDialogRef,
 } from '@angular/material/dialog';
+import { CostumeService } from '../../services/costume-service';
 
 @Component({
     selector: 'app-large-image-dialog',
@@ -15,12 +16,15 @@ import {
 export class LargeImageDialogComponent implements OnInit {
     checkOutHover: string = '';
     showInfo: boolean = true;
+    isChangingImage: boolean = false;
+    imageChangeError: string = '';
 
     constructor(
         public dialogRef: MatDialogRef<LargeImageDialogComponent>,
         @Inject(MAT_DIALOG_DATA)
         public data: { costume: Costume; filterOptions: CostumeFilters },
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private costumeService: CostumeService
     ) {}
 
     ngOnInit(): void {}
@@ -35,6 +39,29 @@ export class LargeImageDialogComponent implements OnInit {
 
     public close(): void {
         this.dialogRef.close();
+    }
+
+    public async imageUploaded(imageName: string): Promise<void> {
+        if (!imageName) {
+            return;
+        }
+
+        this.isChangingImage = true;
+        this.imageChangeError = '';
+        try {
+            await this.costumeService.updateCostumeImage(
+                this.costume.id,
+                imageName
+            );
+            this.costume.imageName = imageName;
+            this.costume.imageUrl = await this.costumeService.getImageUrl(
+                imageName
+            );
+        } catch {
+            this.imageChangeError = 'Could not save the replacement image.';
+        } finally {
+            this.isChangingImage = false;
+        }
     }
 
     public openCheckOutDialog(costume: Costume): void {
